@@ -19,7 +19,7 @@
                                 class="text-gray-800"
                         >-- Select A Variant --</option>
                         @foreach($variants as $variant)
-                            <option value="" disabled class="">{{ $variant['title'] }}</option>
+                            <option value="" disabled>{{ $variant['title'] }}</option>
                             @foreach($variant['items'] as $item)
                                 <option
                                     value="{{$item}}"
