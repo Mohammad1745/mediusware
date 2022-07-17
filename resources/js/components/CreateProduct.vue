@@ -93,6 +93,7 @@
 
         <button @click="saveProduct" type="submit" class="btn btn-lg btn-primary">Save</button>
         <button type="button" class="btn btn-secondary btn-lg">Cancel</button>
+        <span v-if="alertMessage.length>0">{{alertMessage}}</span>
     </section>
 </template>
 
@@ -120,6 +121,7 @@ export default {
     },
     data() {
         return {
+            alertMessage:'',
             product_name: '',
             product_sku: '',
             description: '',
@@ -205,12 +207,20 @@ export default {
             let uri = this.editMode ? '/product/'+this.product[0].id : '/product'
             let method = this.editMode ? 'patch' : 'post'
             axios[method](uri, product).then(response => {
+                this.showAlertMessage(response.data);
                 console.log(response.data);
             }).catch(error => {
+                this.showAlertMessage(error.data);
                 console.log(error);
             })
 
             console.log(product);
+        },
+        showAlertMessage(response){
+            this.alertMessage = response.message
+            setTimeout(()=>{
+                this.alertMessage = ''
+            }, 1500)
         },
         syncProductInfo(){
             this.product_name = this.product[0].title

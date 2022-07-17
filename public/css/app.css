@@ -28484,14 +28484,6 @@ a.text-dark:focus {
 .select2-results__option[aria-selected] {
   cursor: pointer;
 }
-.select2-results__option {
-  margin-left: 30px;
-}
-.select2-results__option[aria-disabled=true],
-.select2-results__option:nth-child(1) {
-  color: gray;
-  margin-left: 10px;
-}
 
 .select2-container--open .select2-dropdown {
   left: 0;

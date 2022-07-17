@@ -2012,6 +2012,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 
@@ -2034,6 +2035,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      alertMessage: '',
       product_name: '',
       product_sku: '',
       description: '',
@@ -2119,6 +2121,8 @@ __webpack_require__.r(__webpack_exports__);
     },
     // store product into database
     saveProduct: function saveProduct() {
+      var _this2 = this;
+
       var product = {
         title: this.product_name,
         sku: this.product_sku,
@@ -2130,21 +2134,34 @@ __webpack_require__.r(__webpack_exports__);
       var uri = this.editMode ? '/product/' + this.product[0].id : '/product';
       var method = this.editMode ? 'patch' : 'post';
       axios[method](uri, product).then(function (response) {
+        _this2.showAlertMessage(response.data);
+
         console.log(response.data);
       })["catch"](function (error) {
+        _this2.showAlertMessage(error.data);
+
         console.log(error);
       });
       console.log(product);
     },
+    showAlertMessage: function showAlertMessage(response) {
+      var _this3 = this;
+
+      console.log('response', response);
+      this.alertMessage = response.message;
+      setTimeout(function () {
+        _this3.alertMessage = '';
+      }, 1500);
+    },
     syncProductInfo: function syncProductInfo() {
-      var _this2 = this;
+      var _this4 = this;
 
       this.product_name = this.product[0].title;
       this.product_sku = this.product[0].sku;
       this.description = this.product[0].description;
       this.product[0].product_variants.map(function (variant, index) {
-        if (index !== 0) _this2.newVariant();
-        _this2.product_variant[index].tags = variant.variant;
+        if (index !== 0) _this4.newVariant();
+        _this4.product_variant[index].tags = variant.variant;
       });
       this.checkVariant();
     }
@@ -50823,7 +50840,11 @@ var render = function() {
       "button",
       { staticClass: "btn btn-secondary btn-lg", attrs: { type: "button" } },
       [_vm._v("Cancel")]
-    )
+    ),
+    _vm._v(" "),
+    _vm.alertMessage.length > 0
+      ? _c("span", [_vm._v(_vm._s(_vm.alertMessage))])
+      : _vm._e()
   ])
 }
 var staticRenderFns = [
