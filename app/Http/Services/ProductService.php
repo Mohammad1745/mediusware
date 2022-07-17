@@ -59,10 +59,11 @@ class ProductService
         try {
             DB::beginTransaction();
             $product = Product::create($this->_formatProductData($request));
+            $this->_saveProductImage($request, $product['id']);
             $this->_saveProductVariants($request, $product['id']);
             $this->_saveProductVariantPrices($request, $product['id']);
 
-            DB::commit();
+            DB::rollBack();
 
             return $this->response()->success('Product Saved Successfully!');
         } catch (\Exception $exception) {
@@ -189,6 +190,11 @@ class ProductService
                 ->pluck('id');
             ProductVariantPrice::create($this->_formatProductVariantPriceData($variantPrice, $productId, $titleIds));
         }
+    }
+
+    private function _saveProductImage (array $request, int $productId)
+    {
+        Log::info('request', $request);
     }
 
     /**
