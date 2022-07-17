@@ -12,13 +12,15 @@ class ProductService
     use ResponseService;
 
     /**
+     * @param object $request
      * @return array
      */
-    public function index (): array
+    public function index (object $request): array
     {
         try {
+            dump($request->query());
             $variants = Variant::all();
-            $products = Product::all();
+            $products = Product::where('title', 'like', "%".$request->query('title')."%")->get();
             $products->map(function ($product) {
                 $productVariantPrices = ProductVariantPrice::where(['product_id' => $product['id']])->get();
                 $productVariantPrices->map(function ($variantPrice) {

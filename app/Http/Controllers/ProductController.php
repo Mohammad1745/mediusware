@@ -31,11 +31,12 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
      * @return Application|Factory|RedirectResponse|View
      */
-    public function index()
+    public function index(Request $request)
     {
-        $response = $this->service->index();
+        $response = $this->service->index($request);
 
         return $response['success'] ?
             view('products.index', $response['data'])
