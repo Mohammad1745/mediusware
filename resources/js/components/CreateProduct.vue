@@ -107,6 +107,12 @@ export default {
         InputTag
     },
     props: {
+        product: {
+            type: Array,
+        },
+        editMode: {
+            type: Boolean,
+        },
         variants: {
             type: Array,
             required: true
@@ -162,6 +168,11 @@ export default {
                     stock: 0
                 })
             })
+            Object.keys(this.product_variant_prices).map(key => {
+                let variantPrice = this.product[0].product_variant_prices.filter(item=>item.variant_title===this.product_variant_prices[key].title)[0]
+                this.product_variant_prices[key].price = variantPrice ? variantPrice.price : 0
+                this.product_variant_prices[key].stock = variantPrice ? variantPrice.stock : 0
+            })
         },
 
         // combination algorithm
@@ -187,20 +198,30 @@ export default {
                 product_variant: this.product_variant,
                 product_variant_prices: this.product_variant_prices
             }
-
-
-            axios.post('/product', product).then(response => {
+            let uri = this.editMode ? '/product/'+this.product[0].id : '/product'
+            axios.post(uri, product).then(response => {
                 console.log(response.data);
             }).catch(error => {
                 console.log(error);
             })
 
             console.log(product);
+        },
+        syncProductInfo(){
+            this.product_name = this.product[0].title
+            this.product_sku = this.product[0].sku
+            this.description = this.product[0].description
+            this.product[0].product_variants.map((variant, index) => {
+                if(index!==0) this.newVariant()
+                this.product_variant[index].tags =  variant.variant
+            })
+            this.checkVariant()
         }
-
 
     },
     mounted() {
+        console.log('product', this.product[0])
+        this.syncProductInfo()
         console.log('Component mounted.')
     }
 }

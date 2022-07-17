@@ -9,6 +9,7 @@ use App\Models\Variant;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use phpDocumentor\Reflection\Utils;
 
 class ProductService
 {
@@ -39,6 +40,63 @@ class ProductService
             $data = [
                 'products' => $products,
                 'variants' => $variants->toArray()
+            ];
+
+            return $this->response($data)->success();
+
+        } catch (\Exception $exception) {
+            dd($exception);
+
+            return $this->response()->error($exception->getMessage());
+        }
+    }
+
+    /**
+     * @param Product $product
+     * @return array
+     */
+    public function getProductEditableData (Product $product): array
+    {
+        try {
+
+            $productVariantPrices = ProductVariantPrice::where(['product_id' => $product['id']])->get();
+            $productVariantPrices->map(function ($item) use ($product) {
+                $variantTitles = ProductVariant::where(['product_id' => $product['id']])
+                    ->whereIn('id' , [$item['product_variant_one'], $item['product_variant_two'], $item['product_variant_three']])
+                    ->pluck('variant')
+                    ->toArray();
+                $item['variant_title'] = implode('/', $variantTitles).'/';
+                return $item;
+            });
+            $productVariants = Variant::all();
+            $productVariants->map(function ($variant) use ($product){
+                $variant['variant']  = ProductVariant::where([
+                    'product_id' => $product['id'],
+                    'variant_id' => $variant->id,
+                ])->pluck('variant');
+                return $variant;
+            });
+            $productVariants = $productVariants->filter(function ($variant) {
+                return count($variant['variant']) > 0;
+            });
+
+
+//            $productVariantPrices->map(function ($variantPrice) {
+//                $variants = ProductVariant::where(['id' => $variantPrice['product_variant_one']])
+//                    ->orWhere(['id' => $variantPrice['product_variant_two']])
+//                    ->orWhere(['id' => $variantPrice['product_variant_three']])
+//                    ->pluck('variant')
+//                    ->toArray();
+//                $variantPrice['variants'] = implode('/', $variants);
+//                return $variantPrice;
+//            });
+
+            $product['product_variants'] = $productVariants->toArray();
+            $product['product_variant_prices'] = $productVariantPrices->toArray();
+
+            $data = [
+                'product' => collect([$product]),
+                'variants' => Variant::all()
             ];
 
             return $this->response($data)->success();

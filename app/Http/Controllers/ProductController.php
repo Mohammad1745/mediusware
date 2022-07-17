@@ -13,6 +13,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class ProductController extends Controller
@@ -83,12 +84,14 @@ class ProductController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param \App\Models\Product $product
-     * @return \Illuminate\Http\Response
+     * @return Application|Factory|RedirectResponse|View
      */
     public function edit(Product $product)
     {
-        $variants = Variant::all();
-        return view('products.edit', compact('variants'));
+        $response = $this->service->getProductEditableData($product);
+        return $response['success'] ?
+            view('products.edit', $response['data'])
+            : redirect()->back();
     }
 
     /**
@@ -100,7 +103,7 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        //
+        Log::info('update', $request->all());
     }
 
     /**
