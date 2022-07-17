@@ -21,8 +21,15 @@ class ProductService
             dump($request->query());
             $variants = Variant::all();
             $products = Product::where('title', 'like', "%".$request->query('title')."%")->get();
-            $products->map(function ($product) {
-                $productVariantPrices = ProductVariantPrice::where(['product_id' => $product['id']])->get();
+            $products->map(function ($product) use ($request) {
+                $productVariantPrices = ProductVariantPrice::where(['product_id' => $product['id']]);
+                if ($request->query('price_from')){
+                    $productVariantPrices = $productVariantPrices->where('price', '>=', $request->query('price_from'));
+                }
+                if ($request->query('price_to')){
+                    $productVariantPrices = $productVariantPrices->where('price', '<=', $request->query('price_to'));
+                }
+                $productVariantPrices = $productVariantPrices->get();
                 $productVariantPrices->map(function ($variantPrice) {
                     $variants = ProductVariant::where(['id' => $variantPrice['product_variant_one']])
                         ->orWhere(['id' => $variantPrice['product_variant_two']])

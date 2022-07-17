@@ -27,8 +27,8 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text">Price Range</span>
                         </div>
-                        <input type="text" name="price_from" aria-label="First name" placeholder="From" class="form-control">
-                        <input type="text" name="price_to" aria-label="Last name" placeholder="To" class="form-control">
+                        <input type="text" name="price_from" value="{{request()->query('price_from')}}" aria-label="First name" placeholder="From" class="form-control">
+                        <input type="text" name="price_to" value="{{request()->query('price_to')}}" aria-label="Last name" placeholder="To" class="form-control">
                     </div>
                 </div>
                 <div class="col-md-2">
@@ -64,7 +64,6 @@
 
                                         @foreach($product['product_variant_prices'] as $variantPrice)
                                             <dt class="col-sm-3 pb-0">
-{{--                                                SM/ Red/ V-Nick--}}
                                                 {{$variantPrice['variants']}}
                                             </dt>
                                             <dd class="col-sm-9">
