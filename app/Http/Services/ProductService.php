@@ -122,6 +122,31 @@ class ProductService
         }
     }
 
+    /**
+     * @param array $request
+     * @param Product $product
+     * @return array
+     */
+    public function updateProduct (array $request, Product $product): array
+    {
+        try {
+            DB::beginTransaction();
+            $this->_saveProductImage($request, $product['id']);
+            ProductVariant::where('product_id', $product['id'])->delete();
+            ProductVariantPrice::where('product_id', $product['id'])->delete();
+            $this->_saveProductVariants($request, $product['id']);
+            $this->_saveProductVariantPrices($request, $product['id']);
+
+            DB::commit();
+
+            return $this->response()->success('Product Saved Successfully!');
+        } catch (\Exception $exception) {
+            DB::rollBack();
+
+            return $this->response()->error($exception->getMessage());
+        }
+    }
+
     private function _getVariants ()
     {
         $variants = Variant::all();
@@ -234,11 +259,10 @@ class ProductService
             $titles = array_filter($titles, function($title) {
                 return $title != "";
             });
-            Log::info('titles', $titles);
             $titleIds = ProductVariant::where(['product_id' => $productId])
                 ->whereIn('variant' , $titles)
-                ->pluck('id');
-            Log::info('titles', [$titleIds]);
+                ->get('id')
+                ->toArray();
             ProductVariantPrice::create($this->_formatProductVariantPriceData($variantPrice, $productId, $titleIds));
         }
     }
@@ -279,15 +303,15 @@ class ProductService
     /**
      * @param array $variantPrice
      * @param int $productId
-     * @param object $titleIds
+     * @param array $titleIds
      * @return array
      */
-    private function _formatProductVariantPriceData(array $variantPrice, int $productId, object $titleIds): array
+    private function _formatProductVariantPriceData(array $variantPrice, int $productId, array $titleIds): array
     {
         return [
-            'product_variant_one' => $titleIds[0],
-            'product_variant_two' => $titleIds->count()>1 ? $titleIds[1] : null,
-            'product_variant_three' => $titleIds->count()>2 ? $titleIds[2] : null,
+            'product_variant_one' => $titleIds[0]['id'],
+            'product_variant_two' => count($titleIds)>1 ? $titleIds[1]['id'] : null,
+            'product_variant_three' => count($titleIds)>2 ? $titleIds[2]['id'] : null,
             'price' => $variantPrice['price'],
             'stock' => $variantPrice['stock'],
             'product_id' => $productId

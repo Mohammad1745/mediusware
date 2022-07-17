@@ -203,7 +203,8 @@ export default {
                 product_variant_prices: this.product_variant_prices
             }
             let uri = this.editMode ? '/product/'+this.product[0].id : '/product'
-            axios.post(uri, product).then(response => {
+            let method = this.editMode ? 'patch' : 'post'
+            axios[method](uri, product).then(response => {
                 console.log(response.data);
             }).catch(error => {
                 console.log(error);

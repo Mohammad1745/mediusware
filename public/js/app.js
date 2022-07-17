@@ -2128,7 +2128,8 @@ __webpack_require__.r(__webpack_exports__);
         product_variant_prices: this.product_variant_prices
       };
       var uri = this.editMode ? '/product/' + this.product[0].id : '/product';
-      axios.post(uri, product).then(function (response) {
+      var method = this.editMode ? 'patch' : 'post';
+      axios[method](uri, product).then(function (response) {
         console.log(response.data);
       })["catch"](function (error) {
         console.log(error);

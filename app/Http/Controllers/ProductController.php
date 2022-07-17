@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
+use App\Http\Requests\ProductUpdateRequest;
 use App\Http\Services\ProductService;
 use App\Models\Product;
 use App\Models\ProductVariant;
@@ -97,13 +98,13 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Product $product
-     * @return \Illuminate\Http\Response
+     * @param ProductUpdateRequest $request
+     * @param Product $product
+     * @return JsonResponse
      */
-    public function update(Request $request, Product $product)
+    public function update(ProductUpdateRequest $request, Product $product): JsonResponse
     {
-        Log::info('update', $request->all());
+        return response()->json($this->service->updateProduct($request->all(), $product));
     }
 
     /**
