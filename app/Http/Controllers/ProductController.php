@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductRequest;
 use App\Http\Services\ProductService;
 use App\Models\Product;
 use App\Models\ProductVariant;
@@ -9,6 +10,7 @@ use App\Models\ProductVariantPrice;
 use App\Models\Variant;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -57,12 +59,12 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param ProductRequest $request
+     * @return JsonResponse
      */
-    public function store(Request $request)
+    public function store(ProductRequest $request): JsonResponse
     {
-
+        return response()->json($this->service->saveProduct($request->all()));
     }
 
 
