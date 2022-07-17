@@ -13,7 +13,11 @@
                     <input type="text" name="title" value="{{request()->query('title')}}" placeholder="Product Title" class="form-control">
                 </div>
                 <div class="col-md-2">
-                    <select name="variant" id="" class="form-control"  data-placeholder="-- Select A Variant --" data-allow-clear="1">
+                    <select name="variant" id="" class="form-control">
+                        <option value=""
+                                @if(is_null(request()->query('variant'))) selected @endif
+                                class="text-gray-800"
+                        >-- Select A Variant --</option>
                         @foreach($variants as $variant)
                             <optgroup label="{{ $variant['title'] }}">
                                 @foreach($variant['items'] as $item)

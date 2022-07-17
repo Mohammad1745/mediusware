@@ -131,6 +131,7 @@ class ProductService
     {
         try {
             DB::beginTransaction();
+            $product->update($this->_formatProductData($request));
             $this->_saveProductImage($request, $product['id']);
             ProductVariant::where('product_id', $product['id'])->delete();
             ProductVariantPrice::where('product_id', $product['id'])->delete();
