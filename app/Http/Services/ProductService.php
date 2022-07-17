@@ -7,6 +7,8 @@ use App\Models\ProductVariant;
 use App\Models\ProductVariantPrice;
 use App\Models\Variant;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ProductService
 {
@@ -43,6 +45,28 @@ class ProductService
 
         } catch (\Exception $exception) {
             dd($exception);
+
+            return $this->response()->error($exception->getMessage());
+        }
+    }
+
+    /**
+     * @param array $request
+     * @return array
+     */
+    public function saveProduct (array $request): array
+    {
+        try {
+            DB::beginTransaction();
+            $product = Product::create($this->_formatProductData($request));
+            $this->_saveProductVariants($request, $product['id']);
+            $this->_saveProductVariantPrices($request, $product['id']);
+
+            DB::commit();
+
+            return $this->response()->success('Product Saved Successfully!');
+        } catch (\Exception $exception) {
+            DB::rollBack();
 
             return $this->response()->error($exception->getMessage());
         }
@@ -132,5 +156,84 @@ class ProductService
             });
         }
         return $productVariantPrices;
+    }
+
+    /**
+     * @param array $request
+     * @param int $productId
+     * @return void
+     */
+    private function _saveProductVariants(array $request, int $productId)
+    {
+        foreach ($request['product_variant'] as $productVariant) {
+            foreach ($productVariant['tags'] as $tag) {
+                ProductVariant::create($this->_formatProductVariantData($productId, $productVariant['option'], $tag));
+            }
+        }
+    }
+
+    /**
+     * @param array $request
+     * @param int $productId
+     * @return void
+     */
+    private function _saveProductVariantPrices(array $request, int $productId)
+    {
+        foreach ($request['product_variant_prices'] as $variantPrice) {
+            $titles = explode('/', $variantPrice['title']);
+            $titles = array_filter($titles, function($title) {
+                return $title != "";
+            });
+            $titleIds = ProductVariant::where(['product_id' => $productId])
+                ->whereIn('variant' , $titles)
+                ->pluck('id');
+            ProductVariantPrice::create($this->_formatProductVariantPriceData($variantPrice, $productId, $titleIds));
+        }
+    }
+
+    /**
+     * @param array $request
+     * @return array
+     */
+    private function _formatProductData(array $request): array
+    {
+        return [
+            'title' => $request['title'],
+            'sku' => $request['sku'],
+            'description' => $request['description'],
+        ];
+    }
+
+    /**
+     * @param int $productId
+     * @param int $variantId
+     * @param string $tag
+     * @return array
+     */
+    private function _formatProductVariantData(int $productId, int $variantId, string $tag): array
+    {
+        return [
+            'variant' => $tag,
+            'variant_id' => $variantId,
+            'product_id' => $productId
+        ];
+    }
+
+    /**
+     * @param array $variantPrice
+     * @param int $productId
+     * @param object $titleIds
+     * @return array
+     */
+    private function _formatProductVariantPriceData(array $variantPrice, int $productId, object $titleIds): array
+    {
+        return [
+            'product_variant_one' => $titleIds[0],
+            'product_variant_two' => $titleIds[1],
+            'product_variant_three' => $titleIds[2],
+            'price' => $variantPrice['price'],
+            'stock' => $variantPrice['stock'],
+            'product_id' => $productId
+        ];
     }
 }
