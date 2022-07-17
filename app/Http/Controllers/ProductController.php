@@ -35,9 +35,10 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $response = $this->service->getProducts();
+        $response = $this->service->index();
+
         return $response['success'] ?
-            view('products.index', ['products'=>$response['data']])
+            view('products.index', $response['data'])
             : redirect()->back();
     }
 
