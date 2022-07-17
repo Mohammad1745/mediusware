@@ -6,7 +6,6 @@
         <h1 class="h3 mb-0 text-gray-800">Products</h1>
     </div>
 
-
     <div class="card">
         <form action="{{route('product.index')}}" method="get" class="card-header">
             <div class="form-row justify-content-between">
@@ -15,9 +14,19 @@
                 </div>
                 <div class="col-md-2">
                     <select name="variant" id="" class="form-control">
-                        <option value="" disabled selected>-- Select A Variant --</option>
+                        <option value=""
+                                @if(is_null(request()->query('variant'))) selected @endif
+                                class="text-gray-800"
+                        >-- Select A Variant --</option>
                         @foreach($variants as $variant)
-                            <option value="{{$variant['id']}}">{{ $variant['title'] }}</option>
+                            <option value="" disabled class="">{{ $variant['title'] }}</option>
+                            @foreach($variant['items'] as $item)
+                                <option
+                                    value="{{$item}}"
+                                    class="select2-results__group"
+                                    @if($item==request()->query('variant')) selected @endif
+                                >{{ $item }}</option>
+                            @endforeach
                         @endforeach
                     </select>
                 </div>
@@ -92,16 +101,14 @@
 
         <div class="card-footer">
             <div class="row justify-content-between">
-                @if ($products->hasPages())
-                    <div class="col-md-6">
-                        <p>Showing {{$products->firstItem()}} to {{$products->lastItem()}} out of {{$products->total()}}</p>
-                    </div>
-                    <div class="col-md-2">
-                            <div class="pagination-wrapper">
-                                {{ $products->links() }}
-                            </div>
-                    </div>
-                @endif
+                <div class="col-md-6">
+                    <p>Showing {{$products->firstItem()}} to {{$products->lastItem()}} out of {{$products->total()}}</p>
+                </div>
+                <div class="col-md-2">
+                        <div class="pagination-wrapper">
+                            {{ $products->links() }}
+                        </div>
+                </div>
             </div>
         </div>
     </div>
