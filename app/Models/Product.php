@@ -10,4 +10,8 @@ class Product extends Model
         'title', 'sku', 'description'
     ];
 
+    protected $casts = [
+        'created_at' =>'date:d-M-Y'
+    ];
+
 }
