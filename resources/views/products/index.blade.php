@@ -13,20 +13,17 @@
                     <input type="text" name="title" value="{{request()->query('title')}}" placeholder="Product Title" class="form-control">
                 </div>
                 <div class="col-md-2">
-                    <select name="variant" id="" class="form-control">
-                        <option value=""
-                                @if(is_null(request()->query('variant'))) selected @endif
-                                class="text-gray-800"
-                        >-- Select A Variant --</option>
+                    <select name="variant" id="" class="form-control"  data-placeholder="-- Select A Variant --" data-allow-clear="1">
                         @foreach($variants as $variant)
-                            <option value="" disabled>{{ $variant['title'] }}</option>
-                            @foreach($variant['items'] as $item)
-                                <option
-                                    value="{{$item}}"
-                                    class="select2-results__group"
-                                    @if($item==request()->query('variant')) selected @endif
-                                >{{ $item }}</option>
-                            @endforeach
+                            <optgroup label="{{ $variant['title'] }}">
+                                @foreach($variant['items'] as $item)
+                                    <option
+                                        value="{{$item}}"
+                                        class="select2-results__group"
+                                        @if($item==request()->query('variant')) selected @endif
+                                    >{{ $item }}</option>
+                                @endforeach
+                            </optgroup>
                         @endforeach
                     </select>
                 </div>

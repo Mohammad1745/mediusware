@@ -2147,7 +2147,6 @@ __webpack_require__.r(__webpack_exports__);
     showAlertMessage: function showAlertMessage(response) {
       var _this3 = this;
 
-      console.log('response', response);
       this.alertMessage = response.message;
       setTimeout(function () {
         _this3.alertMessage = '';
