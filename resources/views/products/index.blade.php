@@ -60,19 +60,22 @@
                                 <td>{{ $product['title'] }} <br> Created at : {{ $product['created_at'] }}</td>
                                 <td>{{ strlen($product['description'])>35 ? substr($product['description'],0,35).'...' : $product['description']}}</td>
                                 <td>
-                                    <dl class="row mb-0" style="height: 80px; overflow: hidden" id="variant">
+                                    <dl class="row mb-0" style="height: 80px; overflow: hidden" id="variant-{{$product['id']}}">
 
-                                        <dt class="col-sm-3 pb-0">
-                                            SM/ Red/ V-Nick
-                                        </dt>
-                                        <dd class="col-sm-9">
-                                            <dl class="row mb-0">
-                                                <dt class="col-sm-4 pb-0">Price : {{ number_format(200,2) }}</dt>
-                                                <dd class="col-sm-8 pb-0">InStock : {{ number_format(50,2) }}</dd>
-                                            </dl>
-                                        </dd>
+                                        @foreach($product['product_variant_prices'] as $variantPrice)
+                                            <dt class="col-sm-3 pb-0">
+{{--                                                SM/ Red/ V-Nick--}}
+                                                {{$variantPrice['variants']}}
+                                            </dt>
+                                            <dd class="col-sm-9">
+                                                <dl class="row mb-0">
+                                                    <dt class="col-sm-4 pb-0">Price : {{ number_format($variantPrice['price'],2) }}</dt>
+                                                    <dd class="col-sm-8 pb-0">InStock : {{ number_format($variantPrice['stock'],2) }}</dd>
+                                                </dl>
+                                            </dd>
+                                        @endforeach
                                     </dl>
-                                    <button onclick="$('#variant').toggleClass('h-auto')" class="btn btn-sm btn-link">Show more</button>
+                                    <button onclick="$('#variant-{{$product["id"]}}').toggleClass('h-auto')" class="btn btn-sm btn-link">Show more</button>
                                 </td>
                                 <td>
                                     <div class="btn-group btn-group-sm">
