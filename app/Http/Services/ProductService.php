@@ -22,8 +22,8 @@ class ProductService
             $variants = Variant::all();
             $products = $this->_getFilterProducts($request);
             $data = [
-                'products' => $products->toArray(),
-                'variants' => $variants->toArray()
+                'products' => $products,
+                'variants' => $variants
             ];
 
             return $this->response($data)->success();
@@ -50,16 +50,17 @@ class ProductService
         if ($request->query('date')) {
             $products = $products->whereDate('created_at', $request->query('date'));
         }
-        $products = $products->get();
+        $products = $products->paginate(2)
+            ->appends($request->query());
         return $this->_mapVariantPrices($products, $request);
     }
 
     /**
-     * @param Collection $products
+     * @param $products
      * @param object $request
-     * @return Collection
+     * @return mixed
      */
-    private function _mapVariantPrices(Collection $products, object $request): Collection
+    private function _mapVariantPrices($products, object $request)
     {
         $products->map(function ($product) use ($request) {
             $productVariantPrices = ProductVariantPrice::where(['product_id' => $product['id']]);
