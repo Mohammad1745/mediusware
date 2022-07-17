@@ -2089,14 +2089,19 @@ __webpack_require__.r(__webpack_exports__);
           stock: 0
         });
       });
-      Object.keys(this.product_variant_prices).map(function (key) {
-        var variantPrice = _this.product[0].product_variant_prices.filter(function (item) {
-          return item.variant_title === _this.product_variant_prices[key].title;
-        })[0];
 
-        _this.product_variant_prices[key].price = variantPrice ? variantPrice.price : 0;
-        _this.product_variant_prices[key].stock = variantPrice ? variantPrice.stock : 0;
-      });
+      if (this.editMode) {
+        Object.keys(this.product_variant_prices).map(function (key) {
+          console.log(_this.product_variant_prices);
+
+          var variantPrice = _this.product[0].product_variant_prices.filter(function (item) {
+            return item['variant_title'] === _this.product_variant_prices[key].title;
+          })[0];
+
+          _this.product_variant_prices[key].price = variantPrice ? variantPrice.price : 0;
+          _this.product_variant_prices[key].stock = variantPrice ? variantPrice.stock : 0;
+        });
+      }
     },
     // combination algorithm
     getCombn: function getCombn(arr, pre) {
@@ -2140,10 +2145,7 @@ __webpack_require__.r(__webpack_exports__);
         if (index !== 0) _this2.newVariant();
         _this2.product_variant[index].tags = variant.variant;
       });
-      this.checkVariant(); // Object.keys(this.product_variant_prices).map(key => {
-      //     this.product_variant_prices[key].price = this.product[0].product_variant_prices[key].price
-      //     this.product_variant_prices[key].stock = this.product[0].product_variant_prices[key].stock
-      // })
+      this.checkVariant();
     }
   },
   mounted: function mounted() {

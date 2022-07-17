@@ -60,13 +60,14 @@ class ProductService
         try {
 
             $productVariantPrices = ProductVariantPrice::where(['product_id' => $product['id']])->get();
-            $productVariantPrices->map(function ($item) use ($product) {
-                $variantTitles = ProductVariant::where(['product_id' => $product['id']])
-                    ->whereIn('id' , [$item['product_variant_one'], $item['product_variant_two'], $item['product_variant_three']])
+            $productVariantPrices->map(function ($variantPrice) {
+                $variants = ProductVariant::where(['id' => $variantPrice['product_variant_one']])
+                    ->orWhere(['id' => $variantPrice['product_variant_two']])
+                    ->orWhere(['id' => $variantPrice['product_variant_three']])
                     ->pluck('variant')
                     ->toArray();
-                $item['variant_title'] = implode('/', $variantTitles).'/';
-                return $item;
+                $variantPrice['variant_title'] = implode('/', $variants).'/';
+                return $variantPrice;
             });
             $productVariants = Variant::all();
             $productVariants->map(function ($variant) use ($product){
@@ -80,16 +81,6 @@ class ProductService
                 return count($variant['variant']) > 0;
             });
 
-
-//            $productVariantPrices->map(function ($variantPrice) {
-//                $variants = ProductVariant::where(['id' => $variantPrice['product_variant_one']])
-//                    ->orWhere(['id' => $variantPrice['product_variant_two']])
-//                    ->orWhere(['id' => $variantPrice['product_variant_three']])
-//                    ->pluck('variant')
-//                    ->toArray();
-//                $variantPrice['variants'] = implode('/', $variants);
-//                return $variantPrice;
-//            });
 
             $product['product_variants'] = $productVariants->toArray();
             $product['product_variant_prices'] = $productVariantPrices->toArray();
@@ -121,7 +112,7 @@ class ProductService
             $this->_saveProductVariants($request, $product['id']);
             $this->_saveProductVariantPrices($request, $product['id']);
 
-            DB::rollBack();
+            DB::commit();
 
             return $this->response()->success('Product Saved Successfully!');
         } catch (\Exception $exception) {
@@ -243,9 +234,11 @@ class ProductService
             $titles = array_filter($titles, function($title) {
                 return $title != "";
             });
+            Log::info('titles', $titles);
             $titleIds = ProductVariant::where(['product_id' => $productId])
                 ->whereIn('variant' , $titles)
                 ->pluck('id');
+            Log::info('titles', [$titleIds]);
             ProductVariantPrice::create($this->_formatProductVariantPriceData($variantPrice, $productId, $titleIds));
         }
     }
@@ -293,8 +286,8 @@ class ProductService
     {
         return [
             'product_variant_one' => $titleIds[0],
-            'product_variant_two' => $titleIds[1],
-            'product_variant_three' => $titleIds[2],
+            'product_variant_two' => $titleIds->count()>1 ? $titleIds[1] : null,
+            'product_variant_three' => $titleIds->count()>2 ? $titleIds[2] : null,
             'price' => $variantPrice['price'],
             'stock' => $variantPrice['stock'],
             'product_id' => $productId

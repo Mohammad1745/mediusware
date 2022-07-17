@@ -168,11 +168,15 @@ export default {
                     stock: 0
                 })
             })
-            Object.keys(this.product_variant_prices).map(key => {
-                let variantPrice = this.product[0].product_variant_prices.filter(item=>item.variant_title===this.product_variant_prices[key].title)[0]
-                this.product_variant_prices[key].price = variantPrice ? variantPrice.price : 0
-                this.product_variant_prices[key].stock = variantPrice ? variantPrice.stock : 0
-            })
+            if (this.editMode) {
+                Object.keys(this.product_variant_prices).map(key => {
+                    console.log(this.product_variant_prices)
+                    let variantPrice = this.product[0].product_variant_prices.filter(item=>item['variant_title'] === this.product_variant_prices[key].title)[0]
+
+                    this.product_variant_prices[key].price = variantPrice ? variantPrice.price : 0
+                    this.product_variant_prices[key].stock = variantPrice ? variantPrice.stock : 0
+                })
+            }
         },
 
         // combination algorithm
