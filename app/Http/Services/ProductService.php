@@ -166,6 +166,11 @@ class ProductService
     private function _getFilteredProducts (object $request)
     {
         $products = Product::query();
+        //filter by variant
+        if ($request->query('variant')) {
+            $productIds = ProductVariant::where(['variant'=> $request->query('variant')])->pluck('product_id')->toArray();
+            $products = $products->whereIn('id', $productIds);
+        }
         //filter by name
         if ($request->query('title')) {
             $products = $products->where('title', 'like', "%".$request->query('title')."%");
@@ -201,9 +206,6 @@ class ProductService
 
             return $product;
         });
-//        $products = $products->filter(function ($product) {
-//            return count($product->product_variant_prices)>0;
-//        });
 
         return $products;
     }
