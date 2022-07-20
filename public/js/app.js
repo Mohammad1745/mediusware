@@ -2161,15 +2161,11 @@ __webpack_require__.r(__webpack_exports__);
     sendingFiles: function sendingFiles(file) {// console.log(file, 'sendingFiles')
     },
     success: function success(file, response) {
-      console.log(file, 'success');
-      console.log(response, 'success response');
-
       if (response.success) {
         this.images.push(response.data.filepath + response.data.filename);
       }
     },
-    successMultiple: function successMultiple(file) {
-      console.log(file, 'success');
+    successMultiple: function successMultiple(file) {// console.log(file, 'success')
     },
     showAlertMessage: function showAlertMessage(response) {
       var _this3 = this;
