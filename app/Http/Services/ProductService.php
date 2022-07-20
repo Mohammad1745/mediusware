@@ -278,6 +278,7 @@ class ProductService
      */
     private function _saveProductImage (array $request, int $productId)
     {
+        ProductImage::where('product_id', $productId)->delete();
         foreach ($request['product_image'] as $image) {
             ProductImage::create($this->_formatProductImageData($image, $productId));
         }
