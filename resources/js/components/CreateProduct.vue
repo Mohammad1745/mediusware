@@ -24,7 +24,14 @@
                         <h6 class="m-0 font-weight-bold text-primary">Media</h6>
                     </div>
                     <div class="card-body border">
-                        <vue-dropzone ref="myVueDropzone" id="dropzone" :options="dropzoneOptions"></vue-dropzone>
+                        <vue-dropzone ref="myVueDropzone" id="dropzone"
+                                      :options="dropzoneOptions"
+                                      @vdropzone-upload-progress="uploadProgress"
+                                      @vdropzone-file-added="fileAdded"
+                                      @vdropzone-sending-multiple="sendingFiles"
+                                      @vdropzone-success="success"
+                                      @vdropzone-success-multiple="successMultiple"
+                        ></vue-dropzone>
                     </div>
                 </div>
             </div>
@@ -134,10 +141,14 @@ export default {
             ],
             product_variant_prices: [],
             dropzoneOptions: {
-                url: 'https://httpbin.org/post',
+                url: '/upload-file',
                 thumbnailWidth: 150,
                 maxFilesize: 0.5,
-                headers: {"My-Awesome-Header": "header value"}
+                headers: {
+                    "X-CSRF-TOKEN": document.head.querySelector("[name=csrf-token]").content
+                },
+                // headers: {"My-Awesome-Header": "header value"},
+                paramName: 'image',
             }
         }
     },
@@ -215,6 +226,27 @@ export default {
             })
 
             console.log(product);
+        },
+
+        // uploadProgress(file) {
+        //     console.log(file, 'uploadProgress')
+        // },
+        // fileAdded(file) {
+        //     console.log(file, 'fileAdded')
+        //     console.log(file.upload.uuid, 'fileAdded file.upload.uuid')
+        // },
+        // sendingFiles(file) {
+        //     console.log(file, 'sendingFiles')
+        // },
+        success(file, response) {
+            console.log(file, 'success')
+            console.log(response, 'success response')
+            if (response.success) {
+                this.images.push(response.data.filename)
+            }
+        },
+        successMultiple(file) {
+            console.log(file, 'success')
         },
         showAlertMessage(response){
             this.alertMessage = response.message

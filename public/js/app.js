@@ -2013,6 +2013,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -2046,12 +2053,14 @@ __webpack_require__.r(__webpack_exports__);
       }],
       product_variant_prices: [],
       dropzoneOptions: {
-        url: 'https://httpbin.org/post',
+        url: '/upload-file',
         thumbnailWidth: 150,
         maxFilesize: 0.5,
         headers: {
-          "My-Awesome-Header": "header value"
-        }
+          "X-CSRF-TOKEN": document.head.querySelector("[name=csrf-token]").content
+        },
+        // headers: {"My-Awesome-Header": "header value"},
+        paramName: 'image'
       }
     };
   },
@@ -2143,6 +2152,23 @@ __webpack_require__.r(__webpack_exports__);
         console.log(error);
       });
       console.log(product);
+    },
+    uploadProgress: function uploadProgress(file) {
+      console.log(file, 'uploadProgress');
+    },
+    fileAdded: function fileAdded(file) {
+      console.log(file, 'fileAdded');
+      console.log(file.upload.uuid, 'fileAdded file.upload.uuid');
+    },
+    sendingFiles: function sendingFiles(file) {
+      console.log(file, 'sendingFiles');
+    },
+    success: function success(file, response) {
+      console.log(file, 'success');
+      console.log(response, 'success response');
+    },
+    successMultiple: function successMultiple(file) {
+      console.log(file, 'success');
     },
     showAlertMessage: function showAlertMessage(response) {
       var _this3 = this;
@@ -50617,7 +50643,14 @@ var render = function() {
             [
               _c("vue-dropzone", {
                 ref: "myVueDropzone",
-                attrs: { id: "dropzone", options: _vm.dropzoneOptions }
+                attrs: { id: "dropzone", options: _vm.dropzoneOptions },
+                on: {
+                  "vdropzone-upload-progress": _vm.uploadProgress,
+                  "vdropzone-file-added": _vm.fileAdded,
+                  "vdropzone-sending-multiple": _vm.sendingFiles,
+                  "vdropzone-success": _vm.success,
+                  "vdropzone-success-multiple": _vm.successMultiple
+                }
               })
             ],
             1
