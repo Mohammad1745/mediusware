@@ -26,4 +26,6 @@ Route::middleware('auth')->group(function () {
     Route::resource('product', 'ProductController');
     Route::resource('blog', 'BlogController');
     Route::resource('blog-category', 'BlogCategoryController');
+
+    Route::post('upload-file', 'FileController@upload')->name('file.upload');
 });
