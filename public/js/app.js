@@ -2153,19 +2153,20 @@ __webpack_require__.r(__webpack_exports__);
       });
       console.log(product);
     },
-    uploadProgress: function uploadProgress(file) {
-      console.log(file, 'uploadProgress');
+    uploadProgress: function uploadProgress(file) {// console.log(file, 'uploadProgress')
     },
-    fileAdded: function fileAdded(file) {
-      console.log(file, 'fileAdded');
-      console.log(file.upload.uuid, 'fileAdded file.upload.uuid');
+    fileAdded: function fileAdded(file) {// console.log(file, 'fileAdded')
+      // console.log(file.upload.uuid, 'fileAdded file.upload.uuid')
     },
-    sendingFiles: function sendingFiles(file) {
-      console.log(file, 'sendingFiles');
+    sendingFiles: function sendingFiles(file) {// console.log(file, 'sendingFiles')
     },
     success: function success(file, response) {
       console.log(file, 'success');
       console.log(response, 'success response');
+
+      if (response.success) {
+        this.images.push(response.data.filepath + response.data.filename);
+      }
     },
     successMultiple: function successMultiple(file) {
       console.log(file, 'success');

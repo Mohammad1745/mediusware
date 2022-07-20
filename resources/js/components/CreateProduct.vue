@@ -228,25 +228,23 @@ export default {
             console.log(product);
         },
 
-        // uploadProgress(file) {
-        //     console.log(file, 'uploadProgress')
-        // },
-        // fileAdded(file) {
-        //     console.log(file, 'fileAdded')
-        //     console.log(file.upload.uuid, 'fileAdded file.upload.uuid')
-        // },
-        // sendingFiles(file) {
-        //     console.log(file, 'sendingFiles')
-        // },
+        uploadProgress(file) {
+            // console.log(file, 'uploadProgress')
+        },
+        fileAdded(file) {
+            // console.log(file, 'fileAdded')
+            // console.log(file.upload.uuid, 'fileAdded file.upload.uuid')
+        },
+        sendingFiles(file) {
+            // console.log(file, 'sendingFiles')
+        },
         success(file, response) {
-            console.log(file, 'success')
-            console.log(response, 'success response')
             if (response.success) {
-                this.images.push(response.data.filename)
+                this.images.push(response.data.filepath+response.data.filename)
             }
         },
         successMultiple(file) {
-            console.log(file, 'success')
+            // console.log(file, 'success')
         },
         showAlertMessage(response){
             this.alertMessage = response.message

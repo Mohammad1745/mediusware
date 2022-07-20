@@ -17,9 +17,10 @@ class FileService
     public function upload (object $request): array
     {
         try {
-            $fileName = $this->uploadFile($request->file('image'), 'public/image');
+            $filePath = 'image/';
+            $fileName = $this->uploadFile($request->file('image'), 'public/'.$filePath);
 
-            return $this->response(['filename'=>$fileName])->success();
+            return $this->response(['filename'=>$fileName, 'filepath'=>'storage/'.$filePath])->success();
         } catch (\Exception $exception) {
             return $this->response()->error($exception->getMessage());
         }

@@ -4,6 +4,7 @@ namespace App\Http\Services;
 
 use App\Http\Services\Traits\Response;
 use App\Models\Product;
+use App\Models\ProductImage;
 use App\Models\ProductVariant;
 use App\Models\ProductVariantPrice;
 use App\Models\Variant;
@@ -270,9 +271,16 @@ class ProductService
         }
     }
 
+    /**
+     * @param array $request
+     * @param int $productId
+     * @return void
+     */
     private function _saveProductImage (array $request, int $productId)
     {
-        Log::info('request', $request);
+        foreach ($request['product_image'] as $image) {
+            ProductImage::create($this->_formatProductImageData($image, $productId));
+        }
     }
 
     /**
@@ -285,6 +293,19 @@ class ProductService
             'title' => $request['title'],
             'sku' => $request['sku'],
             'description' => $request['description'],
+        ];
+    }
+
+    /**
+     * @param string $image
+     * @param int $productId
+     * @return array
+     */
+    private function _formatProductImageData(string $image, int $productId): array
+    {
+        return [
+            'product_id' => $productId,
+            'file_path' => $image,
         ];
     }
 
