@@ -1,10 +1,10 @@
 <?php
 
 
-namespace App\Http\Services;
+namespace App\Http\Services\Traits;
 
 
-trait ResponseService
+trait Response
 {
     /**
      * @var array
